@@ -74,13 +74,16 @@
 
   .section-lb{font-size:12px; color:var(--text-tertiary); font-weight:600; padding:18px 20px 8px;}
   .tx-list{padding:0 14px 6px;}
-  .tx-row{display:flex; align-items:center; gap:11px; padding:9px 6px; border-radius:14px;}
-  .tx-row:active{background:var(--surface-muted);}
+  .tx-row{display:flex; align-items:center; gap:9px; padding:9px 4px; border-radius:14px;}
   .tx-ic{width:38px; height:38px; border-radius:13px; background:var(--surface-muted); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:17px;}
-  .tx-mid{flex:1; min-width:0;}
+  .tx-main{flex:1; min-width:0; cursor:pointer;}
+  .tx-main:active{opacity:.6;}
   .tx-name{font-size:14px; font-weight:600;}
   .tx-time{font-size:11.5px; color:var(--text-tertiary); margin-top:1px;}
   .tx-amt{font-family:var(--font-num); font-size:14px; font-weight:700; flex-shrink:0;}
+  .tx-del{width:30px; height:30px; border-radius:10px; background:none; border:none; color:var(--text-tertiary); display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;}
+  .tx-del svg{width:16px; height:16px;}
+  .tx-del:active{color:var(--expense);}
   .tx-amt.in{color:var(--income);} .tx-amt.out{color:var(--text-primary);}
   .empty-state{padding:30px 20px; text-align:center; color:var(--text-tertiary); font-size:13px;}
 
@@ -99,6 +102,7 @@
 
   .app-header{padding:calc(16px + env(safe-area-inset-top)) 20px 14px; display:flex; align-items:center; gap:12px; background:var(--surface); flex-shrink:0;}
   .back{width:34px; height:34px; border-radius:12px; background:var(--surface-muted); display:flex; align-items:center; justify-content:center; flex-shrink:0; border:none; cursor:pointer;}
+  body.theme-dark .back{background:var(--yellow-deep); color:#141416;}
   .back svg{width:16px; height:16px;}
   .app-title{font-size:16px; font-weight:800;}
   .app-sub{font-size:12px; color:var(--text-tertiary); margin-top:1px;}
@@ -128,13 +132,14 @@
   .key-lite.wide{grid-column:span 2;}
   .key-lite:active{filter:brightness(1.35);}
 
-  .amount-display{text-align:center; padding:16px 0 4px;}
+  .amount-display{text-align:center; padding:16px 20px 4px;}
   .amount-display .al{font-size:12.5px; color:var(--text-tertiary); font-weight:600;}
-  .amount-row{display:flex; align-items:center; justify-content:center; gap:12px; margin-top:6px;}
-  .amount-display .av{font-family:var(--font-num); font-size:36px; font-weight:800;}
-  .del-round{width:32px; height:32px; border-radius:10px; background:none; color:var(--text-tertiary); border:none; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;}
+  .amount-row{display:grid; grid-template-columns:32px minmax(0,1fr) 32px; align-items:center; gap:10px; margin-top:6px;}
+  .amount-spacer{width:32px; height:32px;}
+  .amount-display .av{font-family:var(--font-num); font-size:36px; font-weight:800; text-align:center;}
+  .del-round{width:32px; height:32px; border-radius:10px; background:var(--yellow-deep); color:#141416; border:none; display:flex; align-items:center; justify-content:center; flex-shrink:0; cursor:pointer;}
   .del-round svg{width:22px; height:22px;}
-  .del-round:active{color:var(--text-secondary);}
+  .del-round:active{background:var(--yellow);}
 
   .comment-input{width:100%; background:var(--surface-muted); border:none; border-radius:16px; padding:14px 16px; font-size:14px; color:var(--text-primary); font-family:var(--font-ui); margin:2px 0 4px;}
   .comment-input::placeholder{color:var(--text-tertiary);}
@@ -148,7 +153,13 @@
   .range-row{display:flex; gap:8px; padding:14px 20px 0;}
   .range-btn{flex:1; text-align:center; padding:9px 0; font-size:12.5px; font-weight:700; color:var(--text-secondary); background:var(--surface); border-radius:12px; box-shadow:var(--shadow); border:none; cursor:pointer;}
   .range-btn.active{background:var(--yellow); color:#141416; box-shadow:none;}
+  .date-range-picker{display:flex; align-items:center; gap:8px; padding:10px 20px 0;}
+  .date-input{flex:1; min-width:0; background:var(--surface); box-shadow:var(--shadow); border:none; border-radius:12px; padding:9px 8px; font-family:var(--font-num); font-size:12px; color:var(--text-primary);}
+  .date-range-sep{color:var(--text-tertiary); font-size:13px; flex-shrink:0;}
   .day-picker{display:flex; gap:6px; padding:12px 20px 2px; overflow-x:auto;}
+  .day-edit-btn{display:flex; align-items:center; justify-content:center; width:100%; margin-top:5px; border:none; background:none; color:var(--text-tertiary); padding:2px 0; cursor:pointer;}
+  .day-edit-btn svg{width:12px; height:12px;}
+  .day-chip.selected .day-edit-btn{color:rgba(255,255,255,.55);}
   .day-chip{flex:0 0 54px; background:var(--surface); border-radius:14px; padding:8px 3px; text-align:center; box-shadow:var(--shadow); cursor:pointer; position:relative;}
   .day-chip.is-today{box-shadow:0 0 0 1.5px var(--yellow-deep);}
   .day-chip.selected{background:var(--text-primary); box-shadow:none;}
@@ -211,11 +222,6 @@
             <div class="goal-bar-track"><div class="goal-bar-fill in" id="goal-income-bar" style="width:0%"></div></div>
             <div class="goal-val" id="goal-income-val">0 / 0 ₽</div>
           </div>
-          <div class="goal-row" id="goal-expense-row">
-            <div class="goal-label">Лимит расхода</div>
-            <div class="goal-bar-track"><div class="goal-bar-fill out" id="goal-expense-bar" style="width:0%"></div></div>
-            <div class="goal-val" id="goal-expense-val">0 / 0 ₽</div>
-          </div>
         </div>
       </div>
       <div class="section-lb">Операции сегодня</div>
@@ -243,12 +249,13 @@
   <section class="view" id="view-expense-form">
     <div class="app-header safe-top">
       <button class="back" id="back-expense-form"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <div><div class="app-title" id="expense-title">Расход</div><div class="app-sub">Расход</div></div>
+      <div><div class="app-title" id="expense-title">Расход</div><div class="app-sub" id="expense-form-sub">Расход</div></div>
     </div>
     <div class="scroll">
       <div class="amount-display" id="simple-amount-wrap">
         <div class="al">Сумма</div>
         <div class="amount-row">
+          <span class="amount-spacer"></span>
           <div class="av" id="simple-amount-val">0 ₽</div>
           <button class="del-round" id="expense-del" type="button" aria-label="Стереть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="M18 9l-6 6M12 9l6 6"/></svg></button>
         </div>
@@ -263,12 +270,13 @@
   <section class="view" id="view-income-form">
     <div class="app-header safe-top">
       <button class="back" id="back-income-form"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-      <div><div class="app-title">Доход</div><div class="app-sub">Новая запись</div></div>
+      <div><div class="app-title">Доход</div><div class="app-sub" id="income-form-sub">Новая запись</div></div>
     </div>
     <div class="scroll">
       <div class="amount-display">
         <div class="al">Сумма</div>
         <div class="amount-row">
+          <span class="amount-spacer"></span>
           <div class="av" id="income-amount-val">0 ₽</div>
           <button class="del-round" id="income-del" type="button" aria-label="Стереть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/><path d="M18 9l-6 6M12 9l6 6"/></svg></button>
         </div>
@@ -284,11 +292,27 @@
     <div class="app-header safe-top"><div><div class="app-title">Итоги</div><div class="app-sub" id="summary-range-label">Сегодня</div></div></div>
     <div class="scroll">
       <div class="range-row" id="range-row"></div>
+      <div class="date-range-picker">
+        <input type="date" id="range-from-input" class="date-input" aria-label="С даты">
+        <span class="date-range-sep">–</span>
+        <input type="date" id="range-to-input" class="date-input" aria-label="По дату">
+      </div>
       <div class="day-picker" id="day-picker"></div>
       <div class="summary-net"><div class="sl">Чистыми за период</div><div class="sv" id="summary-net-val">+0 ₽</div></div>
       <div class="bars" id="bars"></div>
     </div>
     <div class="tabbar-wrap"><div class="tabbar"><button class="tab" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg><span class="tab-label">Сегодня</span></button><button class="tab active" data-tab="summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 20v-5"/><path d="M12 20V9"/><path d="M18 20V4"/></svg><span class="tab-label">Итоги</span></button><button class="tab" data-tab="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg><span class="tab-label">Настройки</span></button></div></div>
+  </section>
+
+  <!-- DAY DETAIL (редактирование операций конкретного дня из Итогов) -->
+  <section class="view" id="view-day-detail">
+    <div class="app-header safe-top">
+      <button class="back" id="back-day-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div><div class="app-title" id="day-detail-title">День</div><div class="app-sub">Операции за день</div></div>
+    </div>
+    <div class="scroll">
+      <div class="tx-list" id="day-detail-list"></div>
+    </div>
   </section>
 
   <!-- SETTINGS -->
@@ -302,7 +326,7 @@
         </div>
         <div class="settings-row" id="goals-row">
           <div class="toggle-row" id="goals-toggle-row">
-            <div><div class="st-title">Дневные цели</div><div class="st-desc">Прогресс по доходу и расходу на главном экране</div></div>
+            <div><div class="st-title">Цель по доходу</div><div class="st-desc">Прогресс по доходу на главном экране</div></div>
             <div class="toggle" id="goals-toggle"><div class="toggle-knob"></div></div>
           </div>
           <div class="goals-inputs" id="goals-inputs">
@@ -310,9 +334,17 @@
               <div class="fl">Цель по доходу в день, ₽</div>
               <input type="number" inputmode="numeric" class="goal-input" id="goal-income-input" placeholder="0" min="0">
             </div>
+          </div>
+        </div>
+        <div class="settings-row" id="daily-expense-row">
+          <div class="toggle-row" id="daily-expense-toggle-row">
+            <div><div class="st-title">Ежедневные расходы</div><div class="st-desc">Фиксированная сумма будет автоматически добавляться в расход каждый день (например, аренда авто)</div></div>
+            <div class="toggle" id="daily-expense-toggle"><div class="toggle-knob"></div></div>
+          </div>
+          <div class="goals-inputs" id="daily-expense-inputs">
             <div class="goal-field">
-              <div class="fl">Лимит расхода в день, ₽</div>
-              <input type="number" inputmode="numeric" class="goal-input" id="goal-expense-input" placeholder="0" min="0">
+              <div class="fl">Сумма в день, ₽</div>
+              <input type="number" inputmode="numeric" class="goal-input" id="daily-expense-input" placeholder="0" min="0">
             </div>
           </div>
         </div>
@@ -348,9 +380,11 @@
     supplies: {label:'Расходники',     icon:'🧴'},
     rental:   {label:'Аренда авто',    icon:'🚗'}
   };
+  var EXTRA_CATS = { daily: {label:'Ежедневный расход', icon:'🔁'} };
+  function catInfo(key){ return CATS[key] || EXTRA_CATS[key] || {label:'Расход', icon:'•'}; }
   var INCOME_TAGS = ['Нал','Безнал','Чаевые'];
 
-  var state = { transactions: [], settings: { theme:'light', showGoals:false, goalIncome:0, goalExpense:0 } };
+  var state = { transactions: [], settings: { theme:'light', showGoals:false, goalIncome:0, dailyExpenseEnabled:false, dailyExpenseAmount:0 } };
 
   function loadState(){
     try{
@@ -423,34 +457,60 @@
     if(list.length === 0){
       listEl.innerHTML = '<div class="empty-state">Пока нет операций сегодня</div>';
     } else {
-      listEl.innerHTML = list.map(function(tx){
-        var icon = tx.type==='income' ? '💰' : (CATS[tx.category] ? CATS[tx.category].icon : '•');
-        var name = tx.type==='income' ? ('Доход · ' + tx.subcategory) : (CATS[tx.category] ? CATS[tx.category].label + (tx.subcategory ? ' · ' + tx.subcategory : '') : 'Расход');
-        var amtClass = tx.type==='income' ? 'in' : 'out';
-        var amtSign = tx.type==='income' ? '+' : '−';
-        var timeLine = fmtTime(tx.ts) + (tx.note ? ' · ' + escapeHtml(tx.note) : '');
-        return '<div class="tx-row" data-id="'+tx.id+'">' +
-          '<div class="tx-ic">'+icon+'</div>' +
-          '<div class="tx-mid"><div class="tx-name">'+name+'</div><div class="tx-time">'+timeLine+'</div></div>' +
-          '<div class="tx-amt '+amtClass+'">'+amtSign+fmtMoney(tx.amount)+'</div>' +
-        '</div>';
-      }).join('');
-      listEl.querySelectorAll('.tx-row').forEach(function(row){
-        row.addEventListener('click', function(){
-          var id = row.getAttribute('data-id');
-          if(confirm('Удалить эту операцию?')){
-            state.transactions = state.transactions.filter(function(tx){ return tx.id !== id; });
-            saveState(); renderHome(); renderSummary();
-          }
-        });
-      });
+      listEl.innerHTML = buildTxRowsHtml(list);
+      attachTxListHandlers(listEl, function(){ renderHome(); renderSummary(); }, 'home');
     }
+  }
+
+  var TRASH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>';
+
+  function buildTxRowsHtml(list){
+    return list.map(function(tx){
+      var icon = tx.type==='income' ? '💰' : catInfo(tx.category).icon;
+      var name = tx.type==='income' ? ('Доход · ' + tx.subcategory) : (catInfo(tx.category).label + (tx.subcategory ? ' · ' + tx.subcategory : ''));
+      var amtClass = tx.type==='income' ? 'in' : 'out';
+      var amtSign = tx.type==='income' ? '+' : '−';
+      var timeLine = fmtTime(tx.ts) + (tx.note ? ' · ' + escapeHtml(tx.note) : '');
+      return '<div class="tx-row">' +
+        '<div class="tx-ic">'+icon+'</div>' +
+        '<div class="tx-main" data-id="'+tx.id+'"><div class="tx-name">'+name+'</div><div class="tx-time">'+timeLine+'</div></div>' +
+        '<div class="tx-amt '+amtClass+'">'+amtSign+fmtMoney(tx.amount)+'</div>' +
+        '<button class="tx-del" data-id="'+tx.id+'" type="button" aria-label="Удалить">'+TRASH_SVG+'</button>' +
+      '</div>';
+    }).join('');
+  }
+
+  function attachTxListHandlers(containerEl, onChange, returnView){
+    containerEl.querySelectorAll('.tx-main').forEach(function(el){
+      el.addEventListener('click', function(){
+        var id = el.getAttribute('data-id');
+        var tx = state.transactions.filter(function(t){ return t.id === id; })[0];
+        if(tx) openEditTransaction(tx, returnView);
+      });
+    });
+    containerEl.querySelectorAll('.tx-del').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var id = btn.getAttribute('data-id');
+        if(confirm('Удалить эту операцию?')){
+          state.transactions = state.transactions.filter(function(tx){ return tx.id !== id; });
+          saveState();
+          onChange();
+        }
+      });
+    });
   }
 
   // ---------- EXPENSE FORM ----------
   var form = {
-    expenseCategory: null, simpleBuf: '0', incomeBuf: '0', incomeTag: 'Нал'
+    expenseCategory: null, simpleBuf: '0', incomeBuf: '0', incomeTag: 'Нал',
+    editingId: null, returnView: null
   };
+
+  function amountToBuf(n){
+    var s = String(Math.round(n * 100) / 100);
+    return s.replace('.', ',');
+  }
 
   function buildCatGrid(){
     var grid = document.getElementById('cat-grid');
@@ -477,41 +537,62 @@
   function renderGoals(income, expense){
     var block = document.getElementById('goals-block');
     var goalIncome = state.settings.goalIncome || 0;
-    var goalExpense = state.settings.goalExpense || 0;
     var showIncomeRow = state.settings.showGoals && goalIncome > 0;
-    var showExpenseRow = state.settings.showGoals && goalExpense > 0;
 
-    if(!showIncomeRow && !showExpenseRow){
+    if(!showIncomeRow){
       block.style.display = 'none';
       return;
     }
     block.style.display = 'flex';
-    document.getElementById('goal-income-row').style.display = showIncomeRow ? 'flex' : 'none';
-    document.getElementById('goal-expense-row').style.display = showExpenseRow ? 'flex' : 'none';
-
-    if(showIncomeRow){
-      var pctIn = Math.min(100, Math.round((income / goalIncome) * 100));
-      document.getElementById('goal-income-bar').style.width = pctIn + '%';
-      document.getElementById('goal-income-val').textContent = Math.round(income).toLocaleString('ru-RU') + ' / ' + Math.round(goalIncome).toLocaleString('ru-RU') + ' ₽';
-    }
-    if(showExpenseRow){
-      var pctOut = Math.min(100, Math.round((expense / goalExpense) * 100));
-      var bar = document.getElementById('goal-expense-bar');
-      bar.style.width = pctOut + '%';
-      bar.classList.toggle('over', expense > goalExpense);
-      document.getElementById('goal-expense-val').textContent = Math.round(expense).toLocaleString('ru-RU') + ' / ' + Math.round(goalExpense).toLocaleString('ru-RU') + ' ₽';
-    }
+    var pctIn = Math.min(100, Math.round((income / goalIncome) * 100));
+    document.getElementById('goal-income-bar').style.width = pctIn + '%';
+    document.getElementById('goal-income-val').textContent = Math.round(income).toLocaleString('ru-RU') + ' / ' + Math.round(goalIncome).toLocaleString('ru-RU') + ' ₽';
   }
 
   function openExpenseForm(key){
+    form.editingId = null; form.returnView = null;
     form.expenseCategory = key;
     form.simpleBuf = '0';
-    document.getElementById('expense-title').textContent = CATS[key].label;
+    document.getElementById('expense-title').textContent = catInfo(key).label;
+    document.getElementById('expense-form-sub').textContent = 'Расход';
     document.getElementById('simple-amount-val').textContent = fmtMoney(0);
     document.getElementById('expense-comment').value = '';
     document.getElementById('save-expense').disabled = true;
     buildKeypad('expense-keypad', 'expense');
     nav('view-expense-form');
+  }
+
+  function openEditTransaction(tx, returnView){
+    form.editingId = tx.id;
+    form.returnView = returnView;
+    if(tx.type === 'income'){
+      form.incomeBuf = amountToBuf(tx.amount);
+      form.incomeTag = tx.subcategory || 'Нал';
+      document.getElementById('income-amount-val').textContent = fmtMoney(tx.amount);
+      document.getElementById('income-form-sub').textContent = 'Редактирование';
+      document.getElementById('save-income').disabled = false;
+      buildIncomeTags();
+      nav('view-income-form');
+    } else {
+      form.expenseCategory = tx.category;
+      form.simpleBuf = amountToBuf(tx.amount);
+      document.getElementById('expense-title').textContent = catInfo(tx.category).label;
+      document.getElementById('expense-form-sub').textContent = 'Редактирование';
+      document.getElementById('simple-amount-val').textContent = fmtMoney(tx.amount);
+      document.getElementById('expense-comment').value = tx.note || '';
+      document.getElementById('save-expense').disabled = false;
+      buildKeypad('expense-keypad', 'expense');
+      nav('view-expense-form');
+    }
+  }
+
+  function exitFormFlow(){
+    var rv = form.returnView;
+    form.editingId = null;
+    form.returnView = null;
+    if(rv === 'day-detail'){ nav('view-day-detail'); renderDayDetail(); }
+    else { nav('view-home'); renderHome(); }
+    renderSummary();
   }
 
   function buildKeypad(containerId, mode){
@@ -556,8 +637,14 @@
     var amount = parseBuf(form.simpleBuf);
     if(amount <= 0) return;
     var note = document.getElementById('expense-comment').value.trim();
-    addTransaction({type:'expense', category:form.expenseCategory, subcategory:null, note: note || null, amount:amount, ts:Date.now()});
-    nav('view-home'); renderHome(); renderSummary();
+    if(form.editingId){
+      var tx = state.transactions.filter(function(t){ return t.id === form.editingId; })[0];
+      if(tx){ tx.amount = amount; tx.note = note || null; saveState(); }
+      exitFormFlow();
+    } else {
+      addTransaction({type:'expense', category:form.expenseCategory, subcategory:null, note: note || null, amount:amount, ts:Date.now()});
+      nav('view-home'); renderHome(); renderSummary();
+    }
   });
 
   // ---------- INCOME FORM ----------
@@ -576,22 +663,34 @@
   }
 
   document.getElementById('btn-add-income').addEventListener('click', function(){
+    form.editingId = null; form.returnView = null;
     form.incomeBuf = '0'; form.incomeTag = 'Нал';
     document.getElementById('income-amount-val').textContent = fmtMoney(0);
+    document.getElementById('income-form-sub').textContent = 'Новая запись';
     document.getElementById('save-income').disabled = true;
     buildIncomeTags();
     nav('view-income-form');
   });
   document.getElementById('btn-add-expense').addEventListener('click', function(){ nav('view-categories'); });
   document.getElementById('back-categories').addEventListener('click', function(){ nav('view-home'); });
-  document.getElementById('back-expense-form').addEventListener('click', function(){ nav('view-categories'); });
-  document.getElementById('back-income-form').addEventListener('click', function(){ nav('view-home'); });
+  document.getElementById('back-expense-form').addEventListener('click', function(){
+    if(form.editingId){ exitFormFlow(); } else { nav('view-categories'); }
+  });
+  document.getElementById('back-income-form').addEventListener('click', function(){
+    if(form.editingId){ exitFormFlow(); } else { nav('view-home'); }
+  });
 
   document.getElementById('save-income').addEventListener('click', function(){
     var amount = parseBuf(form.incomeBuf);
     if(amount <= 0) return;
-    addTransaction({type:'income', category:'income', subcategory:form.incomeTag, amount:amount, ts:Date.now()});
-    nav('view-home'); renderHome(); renderSummary();
+    if(form.editingId){
+      var tx = state.transactions.filter(function(t){ return t.id === form.editingId; })[0];
+      if(tx){ tx.amount = amount; tx.subcategory = form.incomeTag; saveState(); }
+      exitFormFlow();
+    } else {
+      addTransaction({type:'income', category:'income', subcategory:form.incomeTag, amount:amount, ts:Date.now()});
+      nav('view-home'); renderHome(); renderSummary();
+    }
   });
 
   // ---------- SUMMARY ----------
@@ -619,10 +718,35 @@
         if(r === 'today'){ summaryMode = 'days'; selectedDays = new Set([startOfDay(Date.now())]); }
         else if(r === 'week'){ summaryMode = 'days'; selectedDays = new Set(weekDays()); }
         else { summaryMode = 'month'; }
+        document.getElementById('range-from-input').value = '';
+        document.getElementById('range-to-input').value = '';
         renderSummary();
       });
     });
   }
+
+  // Диапазон дат — выбор двух дат автоматически выделяет все дни между ними включительно
+  function applyDateRange(){
+    var fromVal = document.getElementById('range-from-input').value;
+    var toVal = document.getElementById('range-to-input').value;
+    if(!fromVal || !toVal) return;
+    var fromTs = startOfDay(new Date(fromVal + 'T00:00:00').getTime());
+    var toTs = startOfDay(new Date(toVal + 'T00:00:00').getTime());
+    if(isNaN(fromTs) || isNaN(toTs)) return;
+    if(fromTs > toTs){ var tmp = fromTs; fromTs = toTs; toTs = tmp; }
+    var days = [];
+    var cur = new Date(fromTs);
+    while(cur.getTime() <= toTs){
+      days.push(startOfDay(cur.getTime()));
+      cur.setDate(cur.getDate() + 1);
+      if(days.length > 370) break;
+    }
+    summaryMode = 'days';
+    selectedDays = new Set(days);
+    renderSummary();
+  }
+  document.getElementById('range-from-input').addEventListener('change', applyDateRange);
+  document.getElementById('range-to-input').addEventListener('change', applyDateRange);
 
   function setEqualsArray(set, arr){
     if(set.size !== arr.length) return false;
@@ -657,6 +781,8 @@
 
   // Календарик — последние 7 дней, каждый день можно включать/выключать независимо.
   // Нажатие на чип переключает режим в 'days' и добавляет/убирает этот день из выборки.
+  var PENCIL_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>';
+
   function renderDayPicker(){
     var el = document.getElementById('day-picker');
     var days = [];
@@ -673,7 +799,8 @@
       var isSelected = (summaryMode === 'days' && selectedDays.has(dayTs));
       var isToday = (dayTs === todayTs);
       var cls = 'day-chip' + (isSelected ? ' selected' : '') + (isToday ? ' is-today' : '');
-      return '<div class="'+cls+'" data-day="'+dayTs+'"><div class="dn">'+label+'</div><div class="dv">'+(net>=0?'+':'−')+Math.round(Math.abs(net))+'</div></div>';
+      var editBtn = isToday ? '' : '<button class="day-edit-btn" data-day="'+dayTs+'" type="button" aria-label="Редактировать день">'+PENCIL_SVG+'</button>';
+      return '<div class="'+cls+'" data-day="'+dayTs+'"><div class="dn">'+label+'</div><div class="dv">'+(net>=0?'+':'−')+Math.round(Math.abs(net))+'</div>'+editBtn+'</div>';
     }).join('');
     el.querySelectorAll('.day-chip').forEach(function(chip){
       chip.addEventListener('click', function(){
@@ -683,8 +810,38 @@
         renderSummary();
       });
     });
+    el.querySelectorAll('.day-edit-btn').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var ts = parseInt(btn.getAttribute('data-day'), 10);
+        openDayDetail(ts);
+      });
+    });
     el.scrollLeft = el.scrollWidth;
   }
+
+  var dayDetailTs = null;
+
+  function openDayDetail(ts){
+    dayDetailTs = ts;
+    renderDayDetail();
+    nav('view-day-detail');
+  }
+
+  function renderDayDetail(){
+    var d = new Date(dayDetailTs);
+    document.getElementById('day-detail-title').textContent = capitalize(d.toLocaleDateString('ru-RU', {weekday:'long', day:'numeric', month:'long'}));
+    var list = state.transactions.filter(function(tx){ return isSameDay(tx.ts, dayDetailTs); }).sort(function(a,b){ return b.ts - a.ts; });
+    var listEl = document.getElementById('day-detail-list');
+    if(list.length === 0){
+      listEl.innerHTML = '<div class="empty-state">Нет операций за этот день</div>';
+    } else {
+      listEl.innerHTML = buildTxRowsHtml(list);
+      attachTxListHandlers(listEl, function(){ renderDayDetail(); renderSummary(); renderHome(); }, 'day-detail');
+    }
+  }
+
+  document.getElementById('back-day-detail').addEventListener('click', function(){ nav('view-summary'); renderSummary(); });
 
   function shortDateLabel(d){
     return d.toLocaleDateString('ru-RU', {day:'numeric', month:'short'});
@@ -715,7 +872,7 @@
     txs.forEach(function(tx){
       if(tx.type === 'income'){ income += tx.amount; }
       else {
-        var lbl = (CATS[tx.category] ? CATS[tx.category].label : 'Другое');
+        var lbl = catInfo(tx.category).label;
         expenseByCat[lbl] = (expenseByCat[lbl] || 0) + tx.amount;
       }
     });
@@ -777,7 +934,12 @@
     toggle.classList.toggle('on', !!state.settings.showGoals);
     inputsWrap.classList.toggle('open', !!state.settings.showGoals);
     document.getElementById('goal-income-input').value = state.settings.goalIncome || '';
-    document.getElementById('goal-expense-input').value = state.settings.goalExpense || '';
+
+    var dToggle = document.getElementById('daily-expense-toggle');
+    var dInputsWrap = document.getElementById('daily-expense-inputs');
+    dToggle.classList.toggle('on', !!state.settings.dailyExpenseEnabled);
+    dInputsWrap.classList.toggle('open', !!state.settings.dailyExpenseEnabled);
+    document.getElementById('daily-expense-input').value = state.settings.dailyExpenseAmount || '';
   }
 
   document.getElementById('goals-toggle-row').addEventListener('click', function(){
@@ -788,10 +950,31 @@
     state.settings.goalIncome = parseFloat(e.target.value) || 0;
     saveState(); renderHome();
   });
-  document.getElementById('goal-expense-input').addEventListener('input', function(e){
-    state.settings.goalExpense = parseFloat(e.target.value) || 0;
-    saveState(); renderHome();
+
+  document.getElementById('daily-expense-toggle-row').addEventListener('click', function(){
+    state.settings.dailyExpenseEnabled = !state.settings.dailyExpenseEnabled;
+    saveState(); renderGoalsSettings();
+    ensureDailyExpense(); renderHome(); renderSummary();
   });
+  document.getElementById('daily-expense-input').addEventListener('input', function(e){
+    state.settings.dailyExpenseAmount = parseFloat(e.target.value) || 0;
+    saveState();
+    ensureDailyExpense(); renderHome(); renderSummary();
+  });
+
+  // Если включено и сегодня ещё не списывалось — добавляет одну автоматическую
+  // расходную операцию на сегодня. Безопасно вызывать многократно (не дублирует).
+  function ensureDailyExpense(){
+    if(!state.settings.dailyExpenseEnabled) return;
+    var amount = state.settings.dailyExpenseAmount || 0;
+    if(amount <= 0) return;
+    var now = Date.now();
+    var alreadyToday = state.transactions.some(function(tx){
+      return tx.category === 'daily' && tx.auto && isSameDay(tx.ts, now);
+    });
+    if(alreadyToday) return;
+    addTransaction({type:'expense', category:'daily', subcategory:null, note:null, amount:amount, ts:now, auto:true});
+  }
 
   document.getElementById('export-history').addEventListener('click', function(){
     var payload = {
@@ -879,6 +1062,7 @@
   // ---------- init ----------
   loadState();
   applyTheme();
+  ensureDailyExpense();
   buildCatGrid();
   buildKeypad('income-keypad', 'income');
   renderHome();
