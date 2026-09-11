@@ -639,7 +639,7 @@
     var note = document.getElementById('expense-comment').value.trim();
     if(form.editingId){
       var tx = state.transactions.filter(function(t){ return t.id === form.editingId; })[0];
-      if(tx){ tx.amount = amount; tx.note = note || null; saveState(); }
+      if(tx){ tx.amount = amount; tx.note = note || null; tx.auto = false; saveState(); }
       exitFormFlow();
     } else {
       addTransaction({type:'expense', category:form.expenseCategory, subcategory:null, note: note || null, amount:amount, ts:Date.now()});
@@ -965,15 +965,25 @@
   // Если включено и сегодня ещё не списывалось — добавляет одну автоматическую
   // расходную операцию на сегодня. Безопасно вызывать многократно (не дублирует).
   function ensureDailyExpense(){
-    if(!state.settings.dailyExpenseEnabled) return;
-    var amount = state.settings.dailyExpenseAmount || 0;
-    if(amount <= 0) return;
     var now = Date.now();
-    var alreadyToday = state.transactions.some(function(tx){
+    var existing = state.transactions.filter(function(tx){
       return tx.category === 'daily' && tx.auto && isSameDay(tx.ts, now);
-    });
-    if(alreadyToday) return;
-    addTransaction({type:'expense', category:'daily', subcategory:null, note:null, amount:amount, ts:now, auto:true});
+    })[0];
+    var amount = state.settings.dailyExpenseAmount || 0;
+
+    if(!state.settings.dailyExpenseEnabled || amount <= 0){
+      if(existing){
+        state.transactions = state.transactions.filter(function(tx){ return tx.id !== existing.id; });
+        saveState();
+      }
+      return;
+    }
+
+    if(existing){
+      if(existing.amount !== amount){ existing.amount = amount; saveState(); }
+    } else {
+      addTransaction({type:'expense', category:'daily', subcategory:null, note:null, amount:amount, ts:now, auto:true});
+    }
   }
 
   document.getElementById('export-history').addEventListener('click', function(){
