@@ -1,6 +1,6 @@
 {
-  "name": "Доход таксиста",
-  "short_name": "Доход",
+  "name": "Доход_таксиста",
+  "short_name": "Доход_такс",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
